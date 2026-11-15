@@ -1,0 +1,93 @@
+Jenkins Pipeline – Steps We Performed
+1. Maven Java Automation
+Step 1: Create Build Job
+1. Open Jenkins (localhost:8080).
+2. Click New Item.
+3. Enter MavenJava_Build.
+4. Select Freestyle Project and click OK.
+5. Under Source Code Management, select Git.
+6. Paste Maven Java GitHub repository URL.
+7. Select branch main/master.
+8. Under Build Steps, add Maven goals:
+   - clean
+   - install
+9. Under Post-build Actions:
+   - Archive artifacts: **/*
+   - Build other projects: MavenJava_Test
+   - Select Only if build is stable.
+10. Click Save.
+Step 2: Create Test Job
+1. Click New Item.
+2. Enter MavenJava_Test.
+3. Select Freestyle Project.
+4. Enable Delete workspace before build starts.
+5. Add Build Step → Copy artifacts from another project.
+6. Project name: MavenJava_Build.
+7. Select Stable build only.
+8. Artifacts to copy: **/*.
+9. Add Maven goal: test.
+10. Archive artifacts: **/*.
+11. Save.
+Step 3: Create Pipeline View
+1. Click + beside All.
+2. Enter MavenJava_Pipeline.
+3. Select Build Pipeline View.
+4. Layout: Based on upstream/downstream relationship.
+5. Initial job: MavenJava_Build.
+6. Apply and Save.
+Step 4: Run Pipeline
+1. Click Run/Build.
+2. Open Console Output.
+3. Check both jobs are successful (green).
+
+2. Maven Web Automation
+Step 1: Create Build Job
+1. New Item → MavenWeb_Build.
+2. Select Freestyle Project.
+3. Connect GitHub Maven Web repository.
+4. Select branch main/master.
+5. Add Maven goals: clean and install.
+6. Archive artifacts: **/*.
+7. Build other projects: MavenWeb_Test.
+8. Trigger only if build is stable.
+9. Save.
+Step 2: Create Test Job
+1. New Item → MavenWeb_Test.
+2. Select Freestyle Project.
+3. Enable Delete workspace before build starts.
+4. Copy artifacts from MavenWeb_Build.
+5. Select Stable build only.
+6. Artifacts to copy: **/*.
+7. Add Maven goal: test.
+8. Archive artifacts: **/*.
+9. Build other projects: MavenWeb_Deploy.
+10. Save.
+Step 3: Create Deploy Job
+1. New Item → MavenWeb_Deploy.
+2. Select Freestyle Project.
+3. Enable Delete workspace before build starts.
+4. Copy artifacts from MavenWeb_Test.
+5. Select Stable build only.
+6. Artifacts to copy: **/*.
+7. Under Post-build Actions, select Deploy WAR/EAR to a container.
+8. WAR/EAR File: **/*.war.
+9. Context path: Webpath.
+10. Add container: Tomcat 9.x remote.
+11. Enter Tomcat credentials.
+12. Tomcat URL: https://localhost:8085/.
+13. Save.
+Step 4: Create Pipeline View
+1. Click + beside All.
+2. Enter MavenWeb_Pipeline.
+3. Select Build Pipeline View.
+4. Layout: Based on upstream/downstream relationship.
+5. Initial job: MavenWeb_Build.
+6. Apply and Save.
+Step 5: Run and Verify
+1. Click Run.
+2. Check Console Output.
+3. Verify all jobs are green.
+4. Open Tomcat homepage.
+5. Go to Manager App.
+6. Open /webpath.
+7. Click the deployed project and check output.
